@@ -1,0 +1,30 @@
+service: fastapi-lambda-test-deploy
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux
+
+provider:
+  name: aws
+  architecture: x86_64
+  runtime: python3.12
+  timeout: 60
+  region: us-east-1
+  logRetentionInDays: 14
+
+  environment:
+    ENVIRONMENT: ${opt:stage, 'production'}
+
+functions:
+  app:
+    handler: src.main.app
+    events:
+      - httpApi:
+          method: ANY
+          path: /{proxy+}
+      - httpApi:
+          method: ANY
+          path: /
